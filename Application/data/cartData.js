@@ -11,6 +11,7 @@ export async function fetchCartData() {
             // console.log("Cart Changed.");
             // setCart(doc.data());
             // console.log(doc.data())
+            //Hey
             return doc.data();
         }
     });
