@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { midtxtSz } from '../theme'
 import { removeFromFSWishlist } from '../FireBase/WishlistOperations'
 
-const WishlistItem = (item, key) => {
+const WishlistItem = (item, key, onremoveWishist) => {
     return (
         <TouchableOpacity activeOpacity={0.8}>
             <View style={styles.card} elevation={2}>
@@ -18,7 +18,7 @@ const WishlistItem = (item, key) => {
                     <Text>Size: {item.size}</Text>
                     <Icon name='circle' color={item.color} />
                     {/* <Button title='Add to Cart' onPress={() => { alert("Abhi se.") }} /> */}
-                    <Button title='Remove' onPress={() => { removeFromFSWishlist(key) }} />
+                    <Button title='Remove' onPress={() => { onremoveWishist(key) }} />
                 </View>
             </View>
         </TouchableOpacity>

@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const txtSz = 20, midTxtSz = 22, lgTxtSz = 26;
 const themecolor = '#006699';
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
   const { user, logout, update } = useContext(AuthContext);
   return (
     <ImageBackground style={styles.mainContainer} source={require('../../src/profileBackground.jpg')}>
@@ -25,20 +25,22 @@ const Profile = () => {
           {/* <Text>Phone No.</Text> */}
           <Text style={styles.fieldTxt}>{user ? user.phoneNumber : "-"}</Text>
         </View>
-        <View style={styles.field}>
-          <Icon name="calendar" size={lgTxtSz} />
+        <TouchableOpacity style={styles.field}>
+          <Icon name="shopping-basket" size={lgTxtSz} />
           {/* <Text>Password</Text> */}
-          <Text style={styles.fieldTxt}>01-Sept-2001</Text>
-        </View>
-        <View style={styles.field}>
+          <Text style={styles.fieldTxt}>My Orders</Text>
+          <Icon name="chevron-right" size={midTxtSz} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.field} onPress={() => navigation.navigate('Address')}>
           <Icon name="map-marker" size={lgTxtSz} />
-          {/* <Text>Address</Text> */}
-          <View>
+          <Text style={styles.fieldTxt}>My Address</Text>
+          <Icon name="chevron-right" size={midTxtSz} style={{ right: 0 }} />
+          {/* <View>
             <Text style={styles.fieldTxt}>Building No.</Text>
             <Text style={styles.fieldTxt}>Street, Block</Text>
             <Text style={styles.fieldTxt}>City, State - Pincode</Text>
-          </View>
-        </View>
+          </View> */}
+        </TouchableOpacity>
         {/* <Pressable style={styles.field} onPress={update}>
           <Icon name="pencil" size={lgTxtSz} style={{ marginRight: 15 }} />
           <Text style={styles.fieldTxt}>Edit Profile</Text>
@@ -83,12 +85,13 @@ const styles = StyleSheet.create({
     marginVertical: 25,
   },
   field: {
+    width: '100%',
     flexDirection: 'row',
     padding: 20,
     borderWidth: 1,
     borderColor: themecolor,
     borderRadius: 20,
-    alignItems: 'flex-start',
+    alignItems: 'baseline',
     marginVertical: 12,
     // marginHorizontal: 25,
   },

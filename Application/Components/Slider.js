@@ -1,17 +1,7 @@
-import { View, Text, StyleSheet, Dimensions, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
-// import slides from '../Data/slides';
-
-const device_width = Dimensions.get("window").width;
-
-const slides = [
-  'https://images.pexels.com/photos/4198972/pexels-photo-4198972.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'https://images.pexels.com/photos/4482900/pexels-photo-4482900.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'https://images.pexels.com/photos/3965548/pexels-photo-3965548.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'https://images.pexels.com/photos/4004172/pexels-photo-4004172.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'https://images.pexels.com/photos/5632386/pexels-photo-5632386.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'https://images.pexels.com/photos/8938734/pexels-photo-8938734.jpeg?auto=compress&cs=tinysrgb&w=600',
-]
+import { device_width, slides } from '../AppData';
+import { themeColor } from '../theme';
 
 const Slider = () => {
 
@@ -79,6 +69,7 @@ const Slider = () => {
 const styles = StyleSheet.create({
   container: {
     // flex: 1
+    marginBottom: 5,
   },
   slider: {
     width: device_width,

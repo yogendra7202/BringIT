@@ -6,6 +6,7 @@ const CartItem = (item, key) => {
         <TouchableOpacity activeOpacity={0.8}>
             <View style={styles.card} elevation={2}>
                 <Text>{item.productName}</Text>
+                <Text>{item.qty}</Text>
             </View>
         </TouchableOpacity>
     )

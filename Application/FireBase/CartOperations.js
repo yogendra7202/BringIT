@@ -31,12 +31,11 @@ export function removeFromFSCart(key) {
 
 export function addToFSCart(data) {
     cartRef.set({
-        [data.productID]: data.item
+        [data.productID]: { ...data.item, qty: firebase.firestore.FieldValue.increment(1) }
     }, { merge: true }
     ).then(() => {
         console.log('Item added to Cart!');
     }).catch((error) => {
         console.log("Failed to add to Cart", error);
     });
-
 }

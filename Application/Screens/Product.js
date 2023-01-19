@@ -4,6 +4,7 @@ import { AirbnbRating, Icon } from '@rneui/themed'
 import firestore, { firebase } from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
 import Counter from '../Components/Counter'
+import { themeColor } from '../theme'
 
 
 const uid = auth().currentUser.uid;
@@ -44,7 +45,7 @@ async function addToCart(productID, item) {
 }
 
 const Product = ({ route, navigation }) => {
-    const item = route.params.item;
+    const item = route.params.data;
     const productID = route.params.productID;
     const [count, setCount] = useState(1);
 
@@ -53,7 +54,7 @@ const Product = ({ route, navigation }) => {
             <Image source={{ uri: item.image }} style={{ width: '100%', height: 300 }} />
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, alignItems: 'center' }}>
                 <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{item.productName}</Text>
-                <Text style={{ fontSize: 25, fontWeight: 'bold' }}>${item.price}</Text>
+                <Text style={{ fontSize: 25, fontWeight: 'bold' }}>Rs.{item.price}</Text>
             </View>
 
             <Counter count={count} setCount={setCount} />
@@ -71,7 +72,10 @@ const Product = ({ route, navigation }) => {
                 <Text style={{ fontSize: 20 }}>Rate the Product</Text>
                 <AirbnbRating />
             </View>
-            <Icon name='chevron-left' type='font-awesome' containerStyle={{ position: 'absolute' }} onPress={() => navigation.goBack()} reverse />
+            <Icon name='chevron-left' type='font-awesome' color={themeColor}
+                containerStyle={{ position: 'absolute', overflow: 'hidden' }}
+                onPress={() => navigation.goBack()}
+                raised />
         </View>
     )
 }

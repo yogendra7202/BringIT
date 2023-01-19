@@ -7,8 +7,6 @@ import { addToWishlist } from '../Redux/Actions'
 import { useDispatch } from 'react-redux'
 
 function Item({ item, productID, onaddWishist, navigation }) {
-  // const [addedtoWishList, setaddedtoWishList] = useState(false);
-  // const dispatch = useDispatch();
 
   return (
     <>

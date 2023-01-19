@@ -11,14 +11,13 @@ import Search from './Screens/Search';
 import { Text, View } from 'react-native';
 import AntIcon from "react-native-vector-icons/AntDesign";
 import { Icon } from '@rneui/themed';
-import ProductList from './Screens/ProductList';
+import { themeColor, themegrey } from './theme';
+import CheckOut from './Screens/CheckOut';
+import Address from './Screens/Address';
 
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
-const themeColor = '#006699';
-const themegrey = '#666';
 
 function tabitem({ color, size }, iconName, labelName) {
     return (
@@ -51,26 +50,33 @@ const AppStack = () => {
             screenOptions={
                 {
                     tabBarShowLabel: false,
-                    tabBarStyle: { position: 'absolute', margin: 18, height: 75, borderRadius: 20, },
+                    tabBarStyle: {
+                        position: 'absolute',
+                        margin: 18,
+                        height: 75,
+                        borderRadius: 20,
+                    },
                     // tabBarIconStyle: {},
                     // tabBarLabelStyle: { fontSize: 16, },
                     // tabBarItemStyle: { padding: 8, },
-                    // headerRight: () => (
-                    //     <Icon
-                    //         onPress={() => alert('This is a button!')}
-                    //         name='shopping-cart'
-                    //         type='font-awesome'
-                    //         iconStyle={{ padding: 8, borderRadius: 10, borderWidth: 1, }}
-                    //     />),
                     tabBarActiveTintColor: themeColor,
                     tabBarInactiveTintColor: themegrey
                 }
             }
-        // initialRouteName={'Search'}
+        // initialRouteName={'Profile'}
         >
             <Tab.Screen name='Home' options={{
 
-                tabBarIcon: (item) => tabitem(item, "home", "Home")
+                tabBarIcon: (item) => tabitem(item, "home", "Home"),
+
+                headerRight: () => (
+                    <Icon
+                        onPress={() => alert('Notification Pane!')}
+                        name="bell-o"
+                        type='font-awesome'
+                        iconStyle={{ padding: 8, borderRadius: 10, borderWidth: 1, marginRight: 10 }}
+                    />),
+
             }}>
                 {() => (
                     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -87,7 +93,7 @@ const AppStack = () => {
                 {() => (
                     <Stack.Navigator screenOptions={{ headerShown: false }}>
                         <Stack.Screen name="SearchScreen" component={Search} />
-                        <Stack.Screen name='ProductList' component={ProductList} />
+                        {/* <Stack.Screen name='ProductList' component={ProductList} /> */}
                         {/* <Stack.Screen name='Profile' component={Profile} /> */}
                     </Stack.Navigator>
                 )}
@@ -97,7 +103,14 @@ const AppStack = () => {
                 tabBarBadge: (cartCount > 0 ? cartCount : null),
                 tabBarBadgeStyle: { backgroundColor: "#fff", color: themegrey, borderWidth: 1, top: -15, right: -5 }
             }} >
-                {() => Cart(setCartCount)}
+                {() => (
+                    <Stack.Navigator screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name='CartScreen' >{
+                            (props) => <Cart {...props} setCartCount={setCartCount} />
+                        }</Stack.Screen>
+                        <Stack.Screen name='CheckOut' component={CheckOut} />
+                    </Stack.Navigator>
+                )}
             </Tab.Screen>
 
             <Tab.Screen name='Wishlist' component={Wishlist} options={{
@@ -114,9 +127,12 @@ const AppStack = () => {
                     />)
             }} >
                 {() => (
-                    <Stack.Navigator screenOptions={{ headerShown: false }}>
+                    <Stack.Navigator screenOptions={{ headerShown: false }}
+                    // initialRouteName='Address'
+                    >
                         <Stack.Screen name="ProfileScreen" component={Profile} />
                         <Stack.Screen name='EditProfile' component={EditProfile} />
+                        <Stack.Screen name='Address' component={Address} />
                         {/* <Stack.Screen name='Profile' component={Profile} /> */}
                     </Stack.Navigator>
                 )}

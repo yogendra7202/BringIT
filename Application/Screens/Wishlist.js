@@ -1,8 +1,12 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { Component } from 'react'
-import WishlistItem from '../Components/WishlistItem'
 import { connect } from 'react-redux'
-import { midtxtSz } from '../theme';
+import { lgtxtSz, midtxtSz } from '../theme'
+import { addToCart, removeFromWishlist } from '../Redux/Actions'
+import ProductItem from '../Components/ProductItem'
+import { device_width } from '../AppData'
+import { Image } from 'react-native'
+import BlankItem from '../Components/BlankItem'
 
 export class Wishlist extends Component {
 
@@ -14,15 +18,16 @@ export class Wishlist extends Component {
   }
 
   componentDidMount() {
-    // console.log(this.state.wishlist);
     // console.log("+++01", this.props.wishlist)
     this.setState({ wishlist: this.props.wishlistState })
   }
-  // componentDidUpdate() {
-  //   // console.log("--", this.state.wishlist);
-  //   console.log("--0", this.props.wishlist)
+  componentDidUpdate() {
+    // console.log("--0", this.props.wishlistState == this.state.wishlist)
+    if (this.props.wishlistState != this.state.wishlist)
+      this.setState({ wishlist: this.props.wishlistState })
+    // this.setState({ wishlist: this.props.wishlistState })
 
-  // }
+  }
 
   render() {
 
@@ -30,16 +35,24 @@ export class Wishlist extends Component {
       <View>
         {this.state.wishlist
           ? Object.keys(this.state.wishlist).length === 0
-            ? <View style={styles.atCenter}>
-              <Text>No Item in Wishlist.</Text>
-              <Text style={styles.txtBtn} onPress={() => { this.props.navigation.navigate('Home') }}>
-                Go to Home...
-              </Text>
-            </View>
+            ? <BlankItem navigation={this.props.navigation} type={'wishlist'} />
             : <FlatList
               data={Object.values(this.state.wishlist)}
-              renderItem={({ item, index }) => WishlistItem(item, Object.keys(this.state.wishlist)[index])}
+              renderItem={({ item, index }) =>
+                <ProductItem
+                  card={false}
+                  item={item}
+                  productID={Object.keys(this.state.wishlist)[index]}
+                  onIcon={(data) => {
+                    this.props.removeFromWishlist(data);
+                  }}
+                  onBtn={(data) => {
+                    this.props.addToCart(data);
+                  }}
+                />
+              }
               keyExtractor={(item, index) => index}
+              style={{ marginBottom: 100 }}
             // extraData={wishlist}
             />
           : <View style={styles.atCenter}><ActivityIndicator /></View>}
@@ -49,21 +62,15 @@ export class Wishlist extends Component {
 }
 
 function mapStateToProps(state) {
-  console.log("State", state)
   return { wishlistState: state.WishListReducer.Wishlist }
 }
+
+export default connect(mapStateToProps, { addToCart, removeFromWishlist })(Wishlist)
 
 const styles = StyleSheet.create({
   atCenter: {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-  },
-  txtBtn: {
-    fontSize: midtxtSz,
-    color: 'purple',
-    fontWeight: '800',
   }
 })
-
-export default connect(mapStateToProps, {})(Wishlist)
