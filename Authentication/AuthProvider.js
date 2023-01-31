@@ -68,13 +68,19 @@ const AuthProvider = ({ children }) => {
                         console.error(e);
                     }
                 },
-                update: async () => {
+                updateProfile: async ({ name, email, password }) => {
                     try {
+                        // const credential = promptForCredentials();
+
+                        await user.reauthenticateWithCredential(password);
+
                         const update = {
-                            phoneNumber: "7291866738",
+                            // phoneNumber: "7291866738",
+                            displayName: name
                         };
                         await auth().currentUser.updateProfile(update);
-
+                        await auth().currentUser.updateEmail(email)
+                        setUser(auth().currentUser)
                     } catch (e) {
                         console.error(e);
                     }

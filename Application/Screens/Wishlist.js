@@ -26,7 +26,10 @@ export class Wishlist extends Component {
     if (this.props.wishlistState != this.state.wishlist)
       this.setState({ wishlist: this.props.wishlistState })
     // this.setState({ wishlist: this.props.wishlistState })
-
+  }
+  componentWillUnmount() {
+    // updateFSCart(this.props.cartState);
+    console.log('called wish')
   }
 
   render() {
@@ -35,7 +38,7 @@ export class Wishlist extends Component {
       <View>
         {this.state.wishlist
           ? Object.keys(this.state.wishlist).length === 0
-            ? <BlankItem navigation={this.props.navigation} type={'wishlist'} />
+            ? <BlankItem onclick={() => { this.props.navigation.navigate('Home') }} type={'wishlist'} />
             : <FlatList
               data={Object.values(this.state.wishlist)}
               renderItem={({ item, index }) =>

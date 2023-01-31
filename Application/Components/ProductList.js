@@ -4,6 +4,7 @@ import { fetchAllFSProducts, fetchFSProducts } from '../FireBase/ProductOperatio
 import ProductItem from './ProductItem';
 import { useDispatch } from 'react-redux';
 import { addToCart, addToWishlist } from '../Redux/Actions';
+import { addToFSCart } from '../FireBase/CartOperations';
 
 
 // const usePreviousValue = value => {
@@ -24,8 +25,7 @@ const ProductList = ({ navigation, filter }) => {
     useEffect(() => {
         if (!productList) {
 
-            fetchAllFSProducts().then(({ ids, data }) => {
-                setKeys(ids);
+            fetchAllFSProducts().then((data) => {
                 setProductList(data);
                 ref.current = data;
             });
@@ -33,7 +33,7 @@ const ProductList = ({ navigation, filter }) => {
         }
         else {
             if (filter && ref.prevfilter != filter) {
-                setProductList(ref.current.filter(product => product.category.includes(filter)))
+                setProductList(ref.current.filter(item => item.product.category.includes(filter)))
             } else if (ref.prevfilter != filter) {
                 setProductList(ref.current);
             }
@@ -78,8 +78,8 @@ const ProductList = ({ navigation, filter }) => {
                                 <ProductItem
                                     key={index}
                                     card
-                                    item={item}
-                                    productID={keys[index]}
+                                    item={item.product}
+                                    productID={item.productId}
                                     onCard={(data) => {
                                         navigation.navigate('Product', { data })
                                     }}

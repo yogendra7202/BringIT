@@ -3,9 +3,10 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import ProductItem from '../Components/ProductItem';
 import { removeFromCart } from '../Redux/Actions';
-import { lgtxtSz, midtxtSz, smtxtSz, themeColor, } from '../theme';
+import { lgtxtSz, midtxtSz, smtxtSz, themeColor, txtSz, } from '../theme';
 import { device_width } from '../AppData';
 import BlankItem from '../Components/BlankItem';
+import { updateFSCart } from '../FireBase/CartOperations';
 
 export class Cart extends Component {
 
@@ -27,7 +28,10 @@ export class Cart extends Component {
             this.setState({ cart: this.props.cartState })
             this.props.setCartCount(this.props.totalQty)
         }
-
+    }
+    componentWillUnmount() {
+        // updateFSCart(this.props.cartState);
+        console.log('called')
     }
 
     render() {
@@ -35,7 +39,7 @@ export class Cart extends Component {
             <View>
                 {this.state.cart
                     ? Object.keys(this.state.cart).length === 0
-                        ? <BlankItem navigation={this.props.navigation} type={'cart'} />
+                        ? <BlankItem onclick={() => { this.props.navigation.navigate('Home') }} type={'cart'} />
                         : <FlatList
                             data={Object.values(this.state.cart)}
                             // ListHeaderComponent={}
@@ -55,6 +59,9 @@ export class Cart extends Component {
                                         type={'cart'}
                                         item={item}
                                         productID={Object.keys(this.state.cart)[index]}
+                                        onCard={(data) => {
+                                            this.props.navigation.navigate('Product', { data })
+                                        }}
                                         onIcon={(data) => {
                                             this.props.removeFromCart(data);
                                         }}
@@ -105,7 +112,7 @@ const styles = StyleSheet.create({
     checkoutBtnTxt: {
         fontWeight: 'bold',
         letterSpacing: 1,
-        fontSize: smtxtSz,
+        fontSize: txtSz,
         color: themeColor,
         textTransform: 'uppercase',
     }

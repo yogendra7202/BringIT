@@ -1,13 +1,11 @@
-import { View, Text, StyleSheet, Image, ImageBackground, TouchableOpacity, Alert, Pressable } from 'react-native'
+import { View, Text, StyleSheet, Image, ImageBackground, TouchableOpacity, Alert, Pressable, ScrollView } from 'react-native'
 import React, { useContext } from 'react'
 import { AuthContext } from '../../Authentication/AuthProvider'
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-const txtSz = 20, midTxtSz = 22, lgTxtSz = 26;
-const themecolor = '#006699';
+import { lgtxtSz, midtxtSz, themeColor, txtSz } from '../theme';
 
 const Profile = ({ navigation }) => {
-  const { user, logout, update } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   return (
     <ImageBackground style={styles.mainContainer} source={require('../../src/profileBackground.jpg')}>
       <View style={styles.container}>
@@ -15,40 +13,43 @@ const Profile = ({ navigation }) => {
         <Image style={styles.profilePic} source={user ? { uri: user.photoURL } : require('../../src/profilePic.png')} />
         <Text style={styles.userName}>{user ? user.displayName : "Guest"}</Text>
 
-        <View style={styles.field}>
-          <Icon name="envelope" size={lgTxtSz} />
-          {/* <Text>Email</Text> */}
-          <Text style={styles.fieldTxt}>{user ? user.email : "-"}</Text>
-        </View>
-        <View style={styles.field}>
-          <Icon name="phone" size={lgTxtSz} />
-          {/* <Text>Phone No.</Text> */}
-          <Text style={styles.fieldTxt}>{user ? user.phoneNumber : "-"}</Text>
-        </View>
-        <TouchableOpacity style={styles.field}>
-          <Icon name="shopping-basket" size={lgTxtSz} />
-          {/* <Text>Password</Text> */}
-          <Text style={styles.fieldTxt}>My Orders</Text>
-          <Icon name="chevron-right" size={midTxtSz} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.field} onPress={() => navigation.navigate('Address')}>
-          <Icon name="map-marker" size={lgTxtSz} />
-          <Text style={styles.fieldTxt}>My Address</Text>
-          <Icon name="chevron-right" size={midTxtSz} style={{ right: 0 }} />
-          {/* <View>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.field}>
+            <Icon name="envelope" size={lgtxtSz} />
+            {/* <Text>Email</Text> */}
+            <Text style={styles.fieldTxt}>{user ? user.email : "-"}</Text>
+          </View>
+          <TouchableOpacity style={styles.field} onPress={() => navigation.navigate('EditPassword')}>
+            <Icon name="key" size={lgtxtSz} />
+            {/* <Text>Phone No.</Text> */}
+            <Text style={styles.fieldTxt}>Change Password</Text>
+            <Icon name="chevron-right" size={midtxtSz} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.field} onPress={() => navigation.navigate('Orders')}>
+            <Icon name="shopping-basket" size={lgtxtSz} />
+            {/* <Text>Password</Text> */}
+            <Text style={styles.fieldTxt}>My Orders</Text>
+            <Icon name="chevron-right" size={midtxtSz} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.field} onPress={() => navigation.navigate('Address')}>
+            <Icon name="map-marker" size={lgtxtSz} />
+            <Text style={styles.fieldTxt}>My Address</Text>
+            <Icon name="chevron-right" size={midtxtSz} style={{ right: 0 }} />
+            {/* <View>
             <Text style={styles.fieldTxt}>Building No.</Text>
             <Text style={styles.fieldTxt}>Street, Block</Text>
             <Text style={styles.fieldTxt}>City, State - Pincode</Text>
           </View> */}
-        </TouchableOpacity>
-        {/* <Pressable style={styles.field} onPress={update}>
-          <Icon name="pencil" size={lgTxtSz} style={{ marginRight: 15 }} />
+          </TouchableOpacity>
+          {/* <Pressable style={styles.field} onPress={update}>
+          <Icon name="pencil" size={lgtxtSz} style={{ marginRight: 15 }} />
           <Text style={styles.fieldTxt}>Edit Profile</Text>
         </Pressable> */}
-        <Text style={styles.tcTxt} onPress={() => { Alert.alert('Soon Available.') }}>Terms & Conditions</Text>
-        <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
-          <Text style={styles.logoutBtnTxt}>Log Out</Text>
-        </TouchableOpacity>
+          <Text style={styles.tcTxt} onPress={() => { Alert.alert('Soon Available.') }}>Terms & Conditions</Text>
+          <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
+            <Text style={styles.logoutBtnTxt}>Log Out</Text>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
     </ImageBackground>
   )
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
-    borderColor: themecolor,
+    borderColor: themeColor,
     borderWidth: 2,
     paddingHorizontal: 25,
   },
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderRadius: 80,
     borderWidth: 2,
-    borderColor: themecolor,
+    borderColor: themeColor,
     borderBottomWidth: 0,
     width: 130,
     height: 130,
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
     right: 70
   },
   userName: {
-    fontSize: lgTxtSz,
+    fontSize: lgtxtSz,
     fontWeight: 'bold',
     marginVertical: 25,
   },
@@ -89,10 +90,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 20,
     borderWidth: 1,
-    borderColor: themecolor,
+    borderColor: themeColor,
     borderRadius: 20,
     alignItems: 'baseline',
-    marginVertical: 12,
+    marginVertical: 10,
     // marginHorizontal: 25,
   },
   fieldTxt: {
@@ -101,22 +102,23 @@ const styles = StyleSheet.create({
   },
   tcTxt: {
     alignSelf: 'center',
-    fontSize: midTxtSz,
-    margin: 16,
-    color: themecolor
+    fontSize: midtxtSz,
+    margin: 12,
+    color: themeColor
   },
   logoutBtn: {
     marginHorizontal: 35,
-    padding: 20,
+    padding: 18,
     borderRadius: 10,
     marginTop: 20,
     alignItems: 'center',
     alignSelf: 'center',
     width: '50%',
-    backgroundColor: themecolor,
+    backgroundColor: themeColor,
+    marginBottom: 100
   },
   logoutBtnTxt: {
-    fontSize: midTxtSz,
+    fontSize: midtxtSz,
     fontWeight: 'bold',
     color: 'white',
     textTransform: 'uppercase'

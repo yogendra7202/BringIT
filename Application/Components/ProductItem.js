@@ -23,6 +23,7 @@ const productBtn = (title, onBtnPress) => (
 const ProductItem = ({ card, type, item, productID, onCard, onIcon, onBtn }) => {
     // console.log(item.qty)
     const [itemQty, setItemQty] = useState(1);
+    const [fav, setFav] = useState(false);
 
     return (
         <View style={[styles.card, card ? { width: device_width / 2 - 16 } : {}]}>
@@ -35,7 +36,7 @@ const ProductItem = ({ card, type, item, productID, onCard, onIcon, onBtn }) => 
                     <View style={styles.inlineflex}>
                         <Text style={styles.price}>Rs.{item.price}</Text>
                         {type == 'cart'
-                            ? <Text style={{ fontWeight: '700', alignSelf: 'center', fontSize: txtSz }}>Qty: {item.qty}</Text>
+                            ? <Text style={{ fontWeight: '700', alignSelf: 'center' }}>Qty: {item.qty}</Text>
                             : <Counter count={itemQty} setCount={setItemQty} />}
                     </View>
 
@@ -52,9 +53,15 @@ const ProductItem = ({ card, type, item, productID, onCard, onIcon, onBtn }) => 
             {
                 <TouchableOpacity
                     style={styles.itemIcon}
-                    onPress={() => { card ? onIcon({ productID, item }) : onIcon(productID) }}
+                    onPress={() => { card || type == 'search' ? (onIcon({ productID, item }), setFav(!fav)) : onIcon(productID) }}
                 >
-                    <Icon name={card ? 'heart-o' : 'trash'} type='font-awesome' size={txtSz} color={themeColor} raised />
+                    <Icon
+                        name={card || type == 'search' ? 'heart-o' : 'trash'}
+                        type='font-awesome'
+                        size={txtSz}
+                        // color={fav ? 'red' : themeColor}
+                        color={themeColor}
+                        raised />
                 </TouchableOpacity>
                 // : <Text style={{ fontWeight: '700', alignSelf: 'flex-end' }}>Qty: {item.qty}</Text>
             }
@@ -75,7 +82,7 @@ const styles = StyleSheet.create({
     topImage: {
         borderRadius: 10,
         width: '100%',
-        height: 180,
+        height: 150,
     },
     leftImage: {
         borderRadius: 10,
@@ -100,8 +107,8 @@ const styles = StyleSheet.create({
         color: '#333'
     },
     addToCartBtn: {
-        paddingVertical: 8,
-        paddingHorizontal: 12,
+        paddingVertical: 6,
+        paddingHorizontal: 10,
         borderWidth: 2,
         borderRadius: 10,
         alignSelf: 'flex-start',

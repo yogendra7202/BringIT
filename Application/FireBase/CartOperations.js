@@ -18,6 +18,18 @@ export const fetchCart = async () => {
 
 }
 
+export function updateFSCart(data) {
+    // console.log(data)
+    cartRef.set({
+        [data.productID]: { ...data.item, qty: data.itemQty }
+    }, { merge: true }
+    ).then(() => {
+        console.log('Updated Cart!');
+    }).catch((error) => {
+        console.log("Failed to update Cart", error);
+    });
+}
+
 export function removeFromFSCart(key) {
     cartRef.update({
         [key]: firebase.firestore.FieldValue.delete()
@@ -31,7 +43,7 @@ export function removeFromFSCart(key) {
 
 export function addToFSCart(data) {
     cartRef.set({
-        [data.productID]: { ...data.item, qty: firebase.firestore.FieldValue.increment(1) }
+        [data.productID]: { ...data.item, qty: data.itemQty }
     }, { merge: true }
     ).then(() => {
         console.log('Item added to Cart!');

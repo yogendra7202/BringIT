@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
 import { Icon } from '@rneui/themed'
-import { smtxtSz, themeColor, txtSz } from '../theme'
+import { midtxtSz, smtxtSz, themeColor, txtSz } from '../theme'
 
 const Counter = ({ count, setCount }) => {
 
@@ -24,20 +24,20 @@ const Counter = ({ count, setCount }) => {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: '#fff'
     },
     icon: {
         borderColor: themeColor,
         borderWidth: 1,
-        padding: 5,
+        padding: 4,
         borderRadius: 5
     },
     count: {
-        fontSize: 20,
+        fontSize: midtxtSz,
         fontWeight: '800',
         color: '#666',
         paddingHorizontal: 10,
-        backgroundColor: '#fff'
     }
 })
 

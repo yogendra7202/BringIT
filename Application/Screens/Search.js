@@ -1,108 +1,162 @@
 import { View, Text, TextInput, StyleSheet, ImageBackground, TouchableOpacity, FlatList, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { Component, useState } from 'react'
 import { Icon } from '@rneui/themed';
+import { fetchFSProducts } from '../FireBase/ProductOperations';
+import BlankItem from '../Components/BlankItem';
+import ProductItem from '../Components/ProductItem';
+import { midtxtSz, themeColor } from '../theme';
+import { connect } from 'react-redux';
+import { addToCart, addToWishlist } from '../Redux/Actions';
 
-const themeColor = '#006699';
-const themegrey = '#666';
+const mostSearched = ["Bata", "Levi's", "Zara", "T-Shirt", "Bags"]
 
-const mostSearched = ["Puma", "Levi's", "Zara", "Puma", "Levi's", "Zara", "Puma", "Levi's", "Zara", "Puma", "Levi's", "Zara"]
-
-function filter(filterName, index) {
+function searchFilter(filterName, index, onfilter) {
     return (
-        // <Switch value={filterName} />
-        // <Icon name='add' style={styles.filters}>{filterName}</Icon>
-        <TouchableOpacity style={styles.filter} key={index} onPress={() => fetchProducts(filterName)}>
+        <TouchableOpacity style={styles.searchFilter} key={index} onPress={() => onfilter()}>
             <Text style={styles.filterTxt}>{filterName}</Text>
         </TouchableOpacity>
     );
 }
 
-const Search = ({ navigation }) => {
-    const [search, setSearch] = useState(null);
+class Search extends Component {
 
-    function fetchProducts(keyword) {
-        navigation.navigate('ProductList', { keyword })
-        // console.log("Keyword ", keyword);
+    constructor(props) {
+        super(props);
+        this.state = {
+            searchList: null,
+            search: null
+        };
+        // this.myTextInput = React.createRef();
     }
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.header}
-            // source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0yQXkF9Fts73EvqVBMOsz4pRrxMhcQ85pVMNY8gLmHuRs-THuLmzKcFntXLbeQCudvTU&usqp=CAU' }}
-            >
-                <Text style={styles.title}>Search</Text>
+    fetchProductList(keyword) {
+        console.log(keyword)
+        if (keyword == '') {
+            this.setState({ searchList: null })
+        } else {
+            fetchFSProducts(keyword).then(data => {
+                // console.log(data)
+                this.setState({ searchList: data })
+            }).catch(error => {
+                console.log("Error in " + keyword, error)
+            })
+        }
+    }
+
+    // reset() {
+    //     this.setState({ searchList: null })
+    // }
+
+    render() {
+
+        return (
+            <View>
                 <View style={styles.searchBarContainer}>
-                    <TextInput style={styles.searchBar} onChangeText={(text) => { setSearch(text) }} />
-                    <Icon name="search" style={styles.searchIcon} onPress={() => fetchProducts(search)} />
+                    <TextInput style={styles.searchBar}
+                        // ref={this.myTextInput}
+                        value={this.state.search}
+                        onChangeText={(text) => this.setState({ search: text })}
+                        onSubmitEditing={() => this.fetchProductList(this.state.search)} />
+                    <Icon
+                        name={this.state.search ? 'close' : 'search'}
+                        style={styles.searchIcon}
+                        onPress={() => this.setState({ search: null })} />
                 </View>
+                {
+                    this.state.searchList
+                        ? this.state.searchList.length == 0
+                            ? <BlankItem type={'search'} />
+                            : <FlatList
+                                data={this.state.searchList}
+                                ListHeaderComponent={
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#f2f2f2' }}>
+                                        <Text style={styles.subtitle}>
+                                            Results for {this.state.search}
+                                        </Text>
+                                        <Icon name='close' onPress={() => this.setState({ searchList: null })} />
+                                    </View>
+                                }
+                                renderItem={({ item }, index) => (
+                                    <ProductItem
+                                        type='search'
+                                        key={index}
+                                        item={item.product}
+                                        productID={item.productId}
+                                        onCard={(data) => {
+                                            this.props.navigation.navigate('Product', { data })
+                                            // console.log('first')
+                                        }}
+                                        onIcon={(data) => {
+                                            this.props.addToWishlist(data);
+                                        }}
+                                        onBtn={(data) => {
+                                            this.props.addToCart(data);
+                                        }}
+                                    />
+                                )}
+                                stickyHeaderIndices={[0]}
+                                contentContainerStyle={[styles.extraMargin, { paddingBottom: 100 }]}
+                                showsVerticalScrollIndicator={false}
+                            />
+                        : <View style={styles.extraMargin}>
+                            <Text style={styles.subtitle}>Most Searched</Text>
+                            <ScrollView contentContainerStyle={styles.filters}>
+                                {
+                                    mostSearched.map((item, index) =>
+                                        searchFilter(item, index, () => {
+                                            this.setState({ search: item })
+                                            this.fetchProductList(item);
+                                        })
+                                    )}
+                            </ScrollView>
+                        </View>
+                }
             </View>
-            <View style={styles.extra}>
-                <Text style={styles.extraTxt}>Most Searched</Text>
-                {/* <FlatList
-                    contentContainerStyle={styles.filters}
-                    data={mostSearched}
-                    renderItem={({ item }) => (filter(item))}
-                horizontal
-                // flat
-                // numColumns={3}
-                /> */}
-                <ScrollView contentContainerStyle={styles.filters}>
-                    {mostSearched.map((item, index) => filter(item, index))}
-                </ScrollView>
-            </View>
-        </View>
-    )
+        )
+    }
 }
 
+export default connect(null, { addToCart, addToWishlist })(Search)
+
 const styles = StyleSheet.create({
-    container: {
-        padding: 20
-    },
-    header: {
-        alignItems: 'center',
-        // justifyContent: 'center',
-        // backgroundColor: themeColor,
-        marginHorizontal: 35,
-        height: 250,
-    },
     title: {
-        fontSize: 36,
         fontWeight: 'bold',
-        color: '#8099a4',
-        marginVertical: 40
+        color: themeColor,
+        marginVertical: 30,
+        fontSize: 36,
     },
     searchBarContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
         backgroundColor: '#fff',
         borderWidth: 1,
         borderRadius: 20,
         padding: 5,
         paddingBottom: 2,
-        // marginTop: 20,
+        margin: 15,
+        position: 'absolute',
     },
     searchBar: {
         width: '90%',
-        // backgroundColor: '#ddd',
         height: 50,
         height: 40,
-        fontSize: 20,
     },
     searchIcon: {
-        padding: 10
+        padding: 10,
+        paddingLeft: 5
     },
-    extra: {
+    extraMargin: {
+        marginTop: 80
     },
-    extraTxt: {
-        fontSize: 20,
-        marginVertical: 15,
+    subtitle: {
+        fontSize: midtxtSz,
+        fontWeight: '500',
+        margin: 10,
     },
     filters: {
         flexDirection: 'row',
         flexWrap: 'wrap'
-
     },
-    filter: {
+    searchFilter: {
         borderWidth: 1,
         paddingVertical: 10,
         paddingHorizontal: 15,
@@ -115,5 +169,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     }
 })
-
-export default Search

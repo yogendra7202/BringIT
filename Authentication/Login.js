@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     },
     newAccountLink: {
         alignSelf: 'center',
-        fontSize: 20
+        fontSize: 16
     }
 })
 

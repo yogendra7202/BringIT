@@ -2,18 +2,23 @@ import firestore from '@react-native-firebase/firestore'
 
 const couponsRef = firestore().collection('coupons')
 
-export async function fetchFSCoupon(keyword) {
+export async function fetchFSCoupon() {
 
-    let data = null;
+    let data = {};
 
-    await couponsRef.doc(keyword)
+    // await couponsRef.doc(keyword)
+    await couponsRef
         .get()
-        .then(docSnapshot => {
-            console.log(`Coupon ${keyword} Fetched`, docSnapshot);
+        .then(querySnapshot => {
+            console.log(`Coupon Fetched`);
+            querySnapshot.forEach((doc) => {
+                // console.log(doc.id, ' => ', doc.data());
+                data[doc.id] = doc.data();
+            });
             // data = docSnapshot.data()
         })
         .catch((error) => {
-            console.log(`Error ${keyword} Coupon: `, error);
+            console.log(`Error Coupon: `, error);
         });
 
     return data;

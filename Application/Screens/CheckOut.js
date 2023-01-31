@@ -1,11 +1,14 @@
-import { View, Text, FlatList, Image, TextInput, StyleSheet, TouchableNativeFeedback, ScrollView, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View, Text, FlatList, Image, TextInput, StyleSheet, TouchableNativeFeedback, ScrollView, TouchableOpacity, Modal } from 'react-native'
+import React, { useState } from 'react'
 import { lgtxtSz, midtxtSz, smtxtSz, themeColor, txtSz } from '../theme';
 import RazorpayCheckout from 'react-native-razorpay';
 import { fetchFSCoupon } from '../FireBase/CouponOperations';
+import { useSelector } from 'react-redux';
+import AddressItem from '../Components/AddressItem';
+import PushNotification from 'react-native-push-notification';
 
 // function payment() {
-//     var options = {
+//     var isAddressVisible = {
 //         description: 'Credits towards consultation',
 //         image: 'https://i.imgur.com/3g7nmJC.jpg',
 //         currency: 'INR',
@@ -20,7 +23,7 @@ import { fetchFSCoupon } from '../FireBase/CouponOperations';
 //         },
 //         theme: { color: '#53a20e' }
 //     }
-//     RazorpayCheckout.open(options).then((data) => {
+//     RazorpayCheckout.open(isAddressVisible).then((data) => {
 //         // handle success
 //         alert(`Success: ${data.razorpay_payment_id}`);
 //     }).catch((error) => {
@@ -28,13 +31,86 @@ import { fetchFSCoupon } from '../FireBase/CouponOperations';
 //         alert(`Error: ${error.code} | ${error.description}`);
 //     });
 // }
+function sendNotification() {
+    PushNotification.localNotification({
+        /* Android Only Properties */
+        channelId: "bring-it", // (required) channelId, if the channel doesn't exist, notification will not trigger.
+        ticker: "My Notification Ticker", // (optional)
+        showWhen: true, // (optional) default: true
+        autoCancel: true, // (optional) default: true
+        largeIcon: "ic_launcher", // (optional) default: "ic_launcher". Use "" for no large icon.
+        largeIconUrl: "https://www.example.tld/picture.jpg", // (optional) default: undefined
+        smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher". Use "" for default small icon.
+        bigText: "My big text that will be shown when notification is expanded. Styling can be done using HTML tags(see android docs for details)", // (optional) default: "message" prop
+        subText: "This is a subText", // (optional) default: none
+        bigPictureUrl: "https://www.example.tld/picture.jpg", // (optional) default: undefined
+        bigLargeIcon: "ic_launcher", // (optional) default: undefined
+        bigLargeIconUrl: "https://www.example.tld/bigicon.jpg", // (optional) default: undefined
+        color: "red", // (optional) default: system default
+        vibrate: true, // (optional) default: true
+        vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+        tag: "some_tag", // (optional) add tag to message
+        group: "group", // (optional) add group to message
+        groupSummary: false, // (optional) set this notification to be the group summary for a group of notifications, default: false
+        ongoing: false, // (optional) set whether this is an "ongoing" notification
+        priority: "high", // (optional) set notification priority, default: high
+        visibility: "private", // (optional) set notification visibility, default: private
+        ignoreInForeground: false, // (optional) if true, the notification will not be visible when the app is in the foreground (useful for parity with how iOS notifications appear). should be used in combine with `com.dieam.reactnativepushnotification.notification_foreground` setting
+        shortcutId: "shortcut-id", // (optional) If this notification is duplicative of a Launcher shortcut, sets the id of the shortcut, in case the Launcher wants to hide the shortcut, default undefined
+        onlyAlertOnce: false, // (optional) alert will open only once with sound and notify, default: false
+
+        // when: null, // (optional) Add a timestamp (Unix timestamp value in milliseconds) pertaining to the notification (usually the time the event occurred). For apps targeting Build.VERSION_CODES.N and above, this time is not shown anymore by default and must be opted into by using `showWhen`, default: null.
+        // usesChronometer: false, // (optional) Show the `when` field as a stopwatch. Instead of presenting `when` as a timestamp, the notification will show an automatically updating display of the minutes and seconds since when. Useful when showing an elapsed time (like an ongoing phone call), default: false.
+        // timeoutAfter: null, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
+
+        messageId: "google:message_id", // (optional) added as `message_id` to intent extras so opening push notification can find data stored by @react-native-firebase/messaging module. 
+
+        actions: ["Yes", "No"], // (Android only) See the doc for notification actions to know more
+        // invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
+
+        /* iOS only properties */
+        // category: "", // (optional) default: empty string
+        // subtitle: "My Notification Subtitle", // (optional) smaller title below notification title
+
+        /* iOS and Android properties */
+        id: 0, // (optional) Valid unique 32 bit integer specified as string. default: Autogenerated Unique ID
+        title: "My Notification Title", // (optional)
+        message: "My Notification Message", // (required)
+        picture: "https://www.example.tld/picture.jpg", // (optional) Display an picture with the notification, alias of `bigPictureUrl` for Android. default: undefined
+        userInfo: {}, // (optional) default: {} (using null throws a JSON value '<null>' error)
+        playSound: false, // (optional) default: true
+        soundName: "default", // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
+        number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
+        repeatType: "day", // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
+    });
+}
 function payment() {
     console.log('Hii');
+    sendNotification();
+
 }
+// function applycoupon() {
+//     setTimeout(() => { }, 1000)
+// }
 
 const CheckOut = ({ navigation, route }) => {
     const cartItems = route.params.cart;
-    const [couponCode, setCouponCode] = useState(null);
+    const [coupons, setCoupons] = useState();
+
+    const [isAddressVisible, setIsAddressVisible] = useState(false);
+    const [selectedAddress, setSelectedAddress] = useState(null);
+
+    const [isCouponVisible, setIsCouponVisible] = useState(false);
+    const [selectedCoupon, setSelectedCoupon] = useState(null);
+
+    const addresses = useSelector(state => state.AddressReducer.addresses)
+    // console.log(addresses)
+
+    async function requestCoupon() {
+        setCoupons(await fetchFSCoupon());
+        setIsCouponVisible(true);
+    }
+
     let total = 0;
     let extraCharges = 0;
     let discount = 0;
@@ -43,51 +119,101 @@ const CheckOut = ({ navigation, route }) => {
         total += (item.qty * item.price);
     });
 
-    console.log('coupon ', fetchFSCoupon(couponCode))
-
-    if (total < 500) {
+    if (total < 1000) {
         extraCharges = 40;
     }
 
+    if (selectedCoupon) {
+        if (coupons[selectedCoupon].discountType == 'flat') {
+            discount = coupons[selectedCoupon].discount;
+        } else {
+            discount = (total * coupons[selectedCoupon].discount) / 100;
+        }
+    }
+    // console.log(coupons[selectedCoupon].discountType)
+
 
     return (
-        <ScrollView>
+        <ScrollView style={{ marginBottom: 100 }}>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isAddressVisible}
+                onRequestClose={() => {
+                    setIsAddressVisible(!isAddressVisible)
+                }}>
+                <View style={styles.centeredView}>
+                    <FlatList
+                        data={addresses}
+                        ListHeaderComponent={<Text style={styles.title}>Select an Address</Text>}
+                        renderItem={({ item }) => (
+                            <AddressItem item={item} onBtn={() => {
+                                setSelectedAddress(`${item.name} - ${item.phone}\n${item.house}, ${item.city}\n${item.pincode}`);
+                                setIsAddressVisible(false);
+                            }} isCheckOut />
+                        )}
+                        keyExtractor={(item, index) => index}
+                        style={styles.modalView}
+                        showsVerticalScrollIndicator={false}
+                    />
+                </View>
+            </Modal>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isCouponVisible}
+                onRequestClose={() => {
+                    setIsCouponVisible(!isCouponVisible)
+                }}>
+                <View style={styles.centeredView}>
+                    {coupons ?
+                        <FlatList
+                            data={Object.keys(coupons)}
+                            ListHeaderComponent={<Text style={styles.title}>Select an Coupon</Text>}
+                            ItemSeparatorComponent={<View
+                                style={{
+                                    height: 1,
+                                    width: "100%",
+                                    backgroundColor: "#000",
+                                }}
+                            />}
+                            renderItem={({ item }) => {
+                                return (
+                                    <Text style={{
+                                        marginHorizontal: 12,
+                                        fontSize: txtSz,
+                                        paddingVertical: 8,
+                                        color: '#666'
+                                    }}
+                                        onPress={() => {
+                                            setSelectedCoupon(item);
+                                            setIsCouponVisible(false)
+                                        }}>{item}</Text>
+                                )
+                            }}
+                            keyExtractor={(item, index) => index}
+                            style={styles.modalView}
+                            showsVerticalScrollIndicator={false}
+                        />
+                        : null}
+                </View>
+            </Modal>
             <View style={styles.innerContainer}>
                 <View style={styles.inlineBox}>
                     <Text style={styles.title}>Delivery Address</Text>
                     {/* <TouchableOpacity style={styles.addressBtn} onPress={() => { navigation.navigate('Profile', { screen: 'Address' }) }}> */}
-                    <Text style={styles.addressBtnTxt}>Select Address</Text>
+                    <Text style={styles.txtBtnTxt} onPress={() => { setIsAddressVisible(!isAddressVisible) }}>Select Address</Text>
                     {/* </TouchableOpacity> */}
                 </View>
-                <Text style={styles.address}>{'Rohit - 7291866738\nSector-101, Noida\n201301'}</Text>
+                {selectedAddress ? <Text style={styles.address}>{selectedAddress}</Text> : null}
             </View>
             <View style={[styles.innerContainer, { maxHeight: 450 }]}>
                 <Text style={styles.title}>Your Products</Text>
-                {/* <FlatList
-                    data={Object.values(cartItems)}
-                    renderItem={({ item }) => {
-                        return (
-                            <View style={styles.productCard}>
-                                <Image source={{ uri: item.image }} style={styles.productImage} />
-                                <View style={styles.productDetails}>
-                                    <Text style={styles.productName}>{item.productName}</Text>
-                                    <View style={styles.inlineBox}>
-                                        <Text>Price: Rs.{item.price}</Text>
-                                        <Text>Qty: {item.qty}</Text>
-                                    </View>
-                                    <Text style={{ fontWeight: 'bold' }}>Total: Rs.{item.price * item.qty}</Text>
-                                </View>
-                            </View>
-                        )
-                    }}
-                    keyExtractor={(item, index) => index}
-                    showsVerticalScrollIndicator={false}
-                /> */}
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
                     {
-                        Object.values(cartItems).map((item) => (
+                        Object.values(cartItems).map((item, index) => (
 
-                            <View style={styles.productCard}>
+                            <View style={styles.productCard} key={index}>
                                 <Image source={{ uri: item.image }} style={styles.productImage} />
                                 <View style={styles.productDetails}>
                                     <Text style={styles.productName}>{item.productName}</Text>
@@ -104,8 +230,15 @@ const CheckOut = ({ navigation, route }) => {
             </View>
             <View style={styles.innerContainer}>
                 {/* <Text style={{ flex: .6 }}></Text> */}
-                <Text style={styles.title}>Apply Coupon</Text>
-                <TextInput placeholder='Enter your Coupon Code Here.' style={styles.couponBox} />
+                <View style={styles.inlineBox}>
+                    <Text style={styles.title}>Apply Coupon</Text>
+                    {
+                        selectedCoupon
+                            ? <Text style={styles.txtBtnTxt} onPress={() => { setSelectedCoupon(null) }}>{selectedCoupon} Applied! ⨯</Text>
+                            : <Text style={styles.txtBtnTxt} onPress={() => { requestCoupon() }}>Choose Coupon</Text>
+                    }
+                </View>
+                {/* <TextInput placeholder='Enter your Coupon Code Here.' style={styles.couponBox} /> */}
             </View>
             <View style={[styles.innerContainer, { padding: 20 }]}>
                 <View style={styles.inlineBox}>
@@ -119,14 +252,14 @@ const CheckOut = ({ navigation, route }) => {
                 {
                     discount
                         ? <View style={styles.inlineBox}>
-                            <Text style={{ flex: .7, fontSize: midtxtSz }}>Delivery Charges: </Text>
-                            <Text style={{ flex: .3, fontSize: midtxtSz, textDecorationLine: extraCharges == 0 ? 'line-through' : 'none' }}>Rs. 40</Text>
+                            <Text style={{ flex: .7, fontSize: midtxtSz }}>Discount: </Text>
+                            <Text style={{ flex: .3, fontSize: midtxtSz }}>Rs. {discount}</Text>
                         </View>
                         : null
                 }
                 <View style={[styles.inlineBox, { borderTopWidth: 2, marginTop: 5, paddingTop: 5 }]}>
                     <Text style={{ flex: .7, fontSize: midtxtSz }}>Payable Amount: </Text>
-                    <Text style={{ flex: .3, fontSize: midtxtSz, fontWeight: 'bold' }}>Rs. {total + extraCharges}</Text>
+                    <Text style={{ flex: .3, fontSize: midtxtSz, fontWeight: 'bold' }}>Rs. {total + extraCharges - discount}</Text>
                 </View>
             </View>
             <TouchableNativeFeedback onPress={() => { payment() }}
@@ -135,7 +268,7 @@ const CheckOut = ({ navigation, route }) => {
                     false,
                 )}>
                 <View style={styles.buyBtn}>
-                    <Text style={styles.btnTxt}>Pay ₹{total + extraCharges}</Text>
+                    <Text style={styles.btnTxt}>Pay ₹{total + extraCharges - discount}</Text>
                 </View>
             </TouchableNativeFeedback>
 
@@ -144,6 +277,20 @@ const CheckOut = ({ navigation, route }) => {
 }
 
 const styles = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,.5)'
+    },
+    modalView: {
+        flexGrow: 0,
+        backgroundColor: '#fff',
+        borderRadius: 15,
+        width: '90%',
+        maxHeight: '65%',
+        padding: 5
+    },
     innerContainer: {
         backgroundColor: '#fff',
         margin: 15,
@@ -180,7 +327,8 @@ const styles = StyleSheet.create({
     inlineBox: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'stretch'
+        alignItems: 'stretch',
+        alignItems: 'center',
     },
     couponBox: {
         backgroundColor: '#eee',
@@ -199,10 +347,10 @@ const styles = StyleSheet.create({
         // marginTop: 5,
         marginRight: 10
     },
-    addressBtnTxt: {
-        fontSize: smtxtSz,
+    txtBtnTxt: {
         fontWeight: 'bold',
-        color: themeColor
+        color: themeColor,
+        marginRight: 10,
     },
     address: {
         fontSize: txtSz,
@@ -216,8 +364,7 @@ const styles = StyleSheet.create({
         borderColor: themeColor,
         backgroundColor: '#fff',
         alignSelf: 'center',
-        marginTop: 20,
-        marginBottom: 150
+        marginVertical: 20,
     },
     btnTxt: {
         fontSize: midtxtSz,

@@ -1,4 +1,4 @@
-import { ScrollView } from 'react-native'
+import { Alert, BackHandler, ScrollView } from 'react-native'
 import React, { Component } from 'react'
 import Slider from '../Components/Slider'
 import CategoryList from '../Components/CategoryList';
@@ -13,14 +13,34 @@ export class Home extends Component {
     }
   }
 
+  // handleBackButton = () => {
+  //   Alert.alert(
+  //     null,
+  //     'Do you want to close.', [{
+  //       text: 'Yes',
+  //       onPress: () => BackHandler.exitApp()
+  //     },
+  //     {
+  //       text: 'Cancel',
+  //       onPress: () => console.log('Cancel Pressed'),
+  //       style: 'cancel'
+  //     },], {
+  //     cancelable: false
+  //   }
+  //   )
+  //   return true;
+  // }
+
+  // componentDidMount() {
+  //   BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  // }
+
   render() {
     return (
       <ScrollView>
         <Slider />
         <CategoriesBtns onFilterChange={(category) => {
-          // console.log('category', category);
           this.setState(({ filter }) => {
-            // console.log('category', category, filter, filter == category);
             if (filter == category) {
               return { filter: null }
             } else {

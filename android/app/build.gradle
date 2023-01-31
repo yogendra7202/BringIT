@@ -88,7 +88,7 @@ apply from: "../../node_modules/react-native/react.gradle"
 
 // For icons
 project.ext.vectoricons = [
-    iconFontNames: [ 'AntDesign.ttf', 'FontAwesome.ttf',  ] // Name of the font files you want to copy
+    iconFontNames: [ 'AntDesign.ttf', 'FontAwesome.ttf', 'MaterialIcons.ttf'  ] // Name of the font files you want to copy
     // 'EvilIcons.ttf', 'FontAwesome5_Regular.ttf', 'FontAwesome5_Solid.ttf', 'FontAwesome5_Brands.ttf'   
 ]
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
@@ -259,6 +259,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
+
+
+  implementation 'com.google.firebase:firebase-analytics:17.3.0' // <-- Add This
 
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules

@@ -4,7 +4,8 @@ import firestore, { firebase } from '@react-native-firebase/firestore'
 import { toastAlert } from "../custom";
 
 const initialState = {
-    Cart: {}
+    Cart: {},
+    // fetched: false,
 }
 
 async function fetchFSCart() {
@@ -13,10 +14,14 @@ async function fetchFSCart() {
 
     await docRef.get().then(documentSnapshot => {
 
-        initialState.Cart = Object.assign(documentSnapshot.data(), {});
+        if (documentSnapshot.exists) {
+            initialState.Cart = Object.assign(documentSnapshot.data(), {});
+        }
         console.log("Cart Fetched.");
-    }
-    );
+
+    }).catch(error => {
+        console.log('Cart Error (R)')
+    });
 }
 
 export default (state = initialState, action) => {
@@ -38,7 +43,14 @@ export default (state = initialState, action) => {
             return { Cart: newList };
 
         default:
+            // if (!state.fetched) {
+            // try {
             fetchFSCart();
+            // } catch (error) {
+            //     console.log('Cart Error (R)')
+            // }
+            //     return { ...state, fetched: true };
+            // }
             return state;
     }
 }

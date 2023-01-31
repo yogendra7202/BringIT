@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { device_width, slides } from '../AppData';
+import { device_height, device_width, slides } from '../AppData';
 import { themeColor } from '../theme';
 
 const Slider = () => {
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
   slider: {
     width: device_width,
-    height: 300,
+    height: device_height * .3,
   },
   image: {
     width: device_width,
