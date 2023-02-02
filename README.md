@@ -5,15 +5,15 @@ This Project is purely based on React Native CLI. Made from the ground up.
 ### Installation
 A little intro about the installation. 
 ```
-$ git clone https://example.com
-$ cd ../path/to/the/file
+$ git clone https://github.com/yogendra7202/BringIT.git
+$ cd BringIT
 $ npm install
-$ npm start
+$ npx react-native run-android
 ```
-Note: To use the application in a special environment use ```lorem ipsum``` to start.
+Note: You must have ```React-Native CLI``` environment to start.
 
-***
-A list of technologies used within the project:
-* [Technology name](https://example.com): Version 12.3 
-* [Technology name](https://example.com): Version 2.34
-* [Library name](https://example.com): Version 1234
+> **Warning**<br/>
+> Either React Native is cross-platform supporting language but this project is not been setup with IOS.<br/>
+> You Need some Extra Steps to use it with IOS.
+
+### ScreenShots
