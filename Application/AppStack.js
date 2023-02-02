@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from 'react'
+import { Text, View } from 'react-native';
+import { Icon } from '@rneui/themed';
+import AntIcon from "react-native-vector-icons/AntDesign";
+import { themeColor, themegrey } from './theme';
+import { StackActions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import PushNotification from 'react-native-push-notification';
+import SplashScreen from 'react-native-splash-screen';
+import { notificatonListener, requestUserPermission } from './FireBase/NoticationService';
 import Home from './Screens/Home';
 import Profile from './Screens/Profile';
-import EditProfile from './Screens/EditProfile';
-import Product from './Screens/Product';
 import Cart from './Screens/Cart';
 import Wishlist from './Screens/Wishlist';
 import Search from './Screens/Search';
-import { Text, View } from 'react-native';
-import AntIcon from "react-native-vector-icons/AntDesign";
-import { Icon } from '@rneui/themed';
-import { themeColor, themegrey } from './theme';
-import CheckOut from './Screens/CheckOut';
 import Address from './Screens/Address';
-import PushNotification from 'react-native-push-notification';
-import { notificatonListener, requestUserPermission } from './FireBase/NoticationService';
-import messaging from '@react-native-firebase/messaging';
-import SplashScreen from 'react-native-splash-screen';
-import Order from './Screens/Order';
+import Product from './Screens/Product';
+import CheckOut from './Screens/OtherScreens/CheckOut';
+import Payment from './Screens/OtherScreens/Payment';
 import EditPassword from './Screens/EditPassword';
-
+import EditProfile from './Screens/EditProfile';
+import Order from './Screens/Order';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -101,21 +101,17 @@ const AppStack = () => {
                     headerShown: false,
                 }
             }
-        // initialRouteName={'Profile'}
         >
             <Tab.Screen name='Home' options={{
-
                 tabBarIcon: (item) => tabitem(item, "home", "Home"),
-
-                // headerRight: () => (
-                //     <Icon
-                //         onPress={() => alert('Notification Pane!')}
-                //         name="bell-o"
-                //         type='font-awesome'
-                //         iconStyle={{ padding: 8, borderRadius: 10, borderWidth: 1, marginRight: 10 }}
-                //     />),
-
-            }}>
+            }}
+                listeners={({ navigation, route }) => ({
+                    blur: () => {
+                        if (route.state && route.state.index > 0) {
+                            navigation.dispatch(StackActions.popToTop());
+                        }
+                    },
+                })}>
                 {() => (
                     <Stack.Navigator screenOptions={{ headerShown: false }}>
                         <Stack.Screen name="HomeScreen" component={Home}
@@ -133,7 +129,6 @@ const AppStack = () => {
                                 }
                             } />
                         <Stack.Screen name='Product' component={Product} />
-                        {/* <Stack.Screen name='Profile' component={Profile} /> */}
                     </Stack.Navigator>
                 )}
             </Tab.Screen>
@@ -142,18 +137,11 @@ const AppStack = () => {
                 headerShown: true,
                 tabBarIcon: (item) => tabitem(item, "search1", "Search")
             }} />
-            {/* {() => (
-                    <Stack.Navigator
-                    // screenOptions={{ headerShown: false }}
-                    >
-                        <Stack.Screen name="SearchScreen" component={Search} /> 
-                    </Stack.Navigator>
-                )}
-            </Tab.Screen> */}
             <Tab.Screen name='Cart' options={{
                 tabBarIcon: (item) => tabSpecialItem(item, "opencart", "Cart"),
                 tabBarBadge: (cartCount > 0 ? cartCount : null),
                 // tabBarBadge: cartCount,
+                // unmountOnBlur: true,
                 tabBarBadgeStyle: {
                     backgroundColor: "#fff",
                     color: themegrey,
@@ -162,19 +150,23 @@ const AppStack = () => {
                     // right: -5
                     left: 0
                 }
-            }} >
+            }}
+                listeners={({ navigation, route }) => ({
+                    blur: () => {
+                        if (route.state && route.state.index > 0) {
+                            navigation.dispatch(StackActions.popToTop());
+                        }
+                    },
+                })} >
                 {() => (
                     <Stack.Navigator>
-                        <Stack.Screen name='CartScreen' options={
-                            {
-                                title: 'Cart',
-                            }
-                        } >
+                        <Stack.Screen name='CartScreen' options={{ title: 'Cart' }} >
                             {
                                 (props) => <Cart {...props} setCartCount={setCartCount} />
                             }
                         </Stack.Screen>
                         <Stack.Screen name='CheckOut' component={CheckOut} />
+                        <Stack.Screen name='Payment' options={{ headerShown: false }} component={Payment} />
                     </Stack.Navigator>
                 )}
             </Tab.Screen>
@@ -192,7 +184,14 @@ const AppStack = () => {
                         type='font-awesome'
                         containerStyle={{ marginRight: 15 }}
                     />)
-            }} >
+            }}
+                listeners={({ navigation, route }) => ({
+                    blur: () => {
+                        if (route.state && route.state.index > 0) {
+                            navigation.dispatch(StackActions.popToTop());
+                        }
+                    },
+                })} >
                 {() => (
                     <Stack.Navigator
                     // initialRouteName='Address'

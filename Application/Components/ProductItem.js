@@ -5,25 +5,33 @@ import { midtxtSz, smtxtSz, themeColor, txtSz } from '../theme'
 import { addToFSCart } from '../FireBase/CartOperations'
 import { device_width } from '../AppData'
 import Counter from './Counter'
+import { useSelector } from 'react-redux'
 
 // function addBtn({ name }) {
 //     return (
 //         <TouchableOpacity>{name}</TouchableOpacity>
 //     )
 // }
-const productBtn = (title, onBtnPress) => (
-    <TouchableOpacity
-        style={styles.addToCartBtn}
-        onPress={() => { onBtnPress() }}
-    >
-        <Text style={{ fontWeight: '700', color: themeColor }}>{title}</Text>
-    </TouchableOpacity>
-)
+// const productBtn = (title, onBtnPress) => (
+//     <TouchableOpacity
+//         style={styles.addToCartBtn}
+//         onPress={() => { onBtnPress() }}
+//     >
+//         <Text style={{ fontWeight: '700', color: themeColor }}>{title}</Text>
+//     </TouchableOpacity>
+// )
 
-const ProductItem = ({ card, type, item, productID, onCard, onIcon, onBtn }) => {
+const ProductItem = ({ card, type, item, productID, onCard, onIcon, onRemove, onBtn }) => {
     // console.log(item.qty)
     const [itemQty, setItemQty] = useState(1);
-    const [fav, setFav] = useState(false);
+    const wishlist = useSelector(state => state.WishListReducer.Wishlist)
+
+    let addedinWishlist = false;
+    // console.log(wishlist);
+    if (Object.keys(wishlist).includes(productID)) {
+        addedinWishlist = true;
+    }
+
 
     return (
         <View style={[styles.card, card ? { width: device_width / 2 - 16 } : {}]}>
@@ -53,14 +61,14 @@ const ProductItem = ({ card, type, item, productID, onCard, onIcon, onBtn }) => 
             {
                 <TouchableOpacity
                     style={styles.itemIcon}
-                    onPress={() => { card || type == 'search' ? (onIcon({ productID, item }), setFav(!fav)) : onIcon(productID) }}
+                    onPress={() => { card || type == 'search' ? onIcon({ productID, item }) : onIcon(productID) }}
                 >
                     <Icon
-                        name={card || type == 'search' ? 'heart-o' : 'trash'}
+                        name={card || type == 'search' ? addedinWishlist ? 'heart' : 'heart-o' : 'trash'}
                         type='font-awesome'
                         size={txtSz}
-                        // color={fav ? 'red' : themeColor}
-                        color={themeColor}
+                        color={addedinWishlist && (card || type == 'search') ? 'red' : themeColor}
+                        // color={themeColor}
                         raised />
                 </TouchableOpacity>
                 // : <Text style={{ fontWeight: '700', alignSelf: 'flex-end' }}>Qty: {item.qty}</Text>

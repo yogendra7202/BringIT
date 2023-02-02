@@ -1,11 +1,43 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native'
 import React, { Component } from 'react'
 import { midtxtSz, themeColor, txtSz, xlgtxtSz } from '../theme'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { AuthContext } from '../../Authentication/AuthProvider';
+import { toastAlert } from '../custom';
 
 class EditPassword extends Component {
+
     static contextType = AuthContext;
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            password: '',
+            newPassword: '',
+            confirmPassword: '',
+        };
+    }
+
+    onSubmit = async () => {
+        if (this.state.password == '' || this.state.newPassword == '' || this.state.confirmPassword == '') {
+            Alert.alert('', 'Please Fill all the Fields.')
+        } else {
+            if (this.state.newPassword.length < 8) {
+                Alert.alert('', 'Password must contain minimum 8 letters.')
+            } else if (this.state.confirmPassword != this.state.newPassword) {
+                Alert.alert('', 'Confirm password must be same as new password.')
+            } else {
+                await this.context.relogin(this.state.password).then(async () => {
+                    await this.context.updatePassword(this.state.newPassword);
+                    toastAlert('Password Changed Successfully.');
+                    this.props.navigation.goBack();
+                }).catch(e => {
+                    console.log(e)
+                    Alert.alert('', 'Entered Password is incorrect.')
+                })
+            }
+        }
+    }
 
     render() {
         return (
@@ -23,6 +55,9 @@ class EditPassword extends Component {
                     <TextInput
                         placeholder='Enter your Old Password'
                         style={styles.inputField}
+                        onChangeText={(txt) => {
+                            this.setState({ password: txt })
+                        }}
                     />
                 </View>
                 <View style={styles.inputBox}>
@@ -30,6 +65,9 @@ class EditPassword extends Component {
                     <TextInput
                         placeholder='Enter your New Password'
                         style={styles.inputField}
+                        onChangeText={(txt) => {
+                            this.setState({ newPassword: txt })
+                        }}
                     />
                 </View>
                 <View style={styles.inputBox}>
@@ -37,10 +75,13 @@ class EditPassword extends Component {
                     <TextInput
                         placeholder='Confirm your New Password'
                         style={styles.inputField}
+                        onChangeText={(txt) => {
+                            this.setState({ confirmPassword: txt })
+                        }}
                     />
                 </View>
-                <TouchableOpacity style={styles.submitBtn}>
-                    <Text style={styles.submitBtnTxt}>Update</Text>
+                <TouchableOpacity style={styles.submitBtn} onPress={() => this.onSubmit()}>
+                    <Text style={styles.submitBtnTxt}>Change</Text>
                 </TouchableOpacity>
             </View>
         )

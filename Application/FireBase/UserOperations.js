@@ -9,7 +9,7 @@ export async function updateFAUserPhone(phone) {
         phoneNumber: phone
     }, { merge: true }
     ).then(() => {
-        console.log('Phone no. added to User!');
+        console.log('Phone no. Updated!');
     }).catch((error) => {
         console.log("Failed to add no to User", error);
     });
@@ -21,9 +21,9 @@ export async function updateFAUserAddress(addresses) {
         addresses: addresses
     }, { merge: true }
     ).then(() => {
-        console.log('Addresses added to User!');
+        console.log('Addresses Updated!');
     }).catch((error) => {
-        console.log("Failed to add addresses to User", error);
+        console.log("Failed to update addresses", error);
     });
 
 }

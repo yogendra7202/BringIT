@@ -10,10 +10,9 @@ const Login = ({ navigation }) => {
 
     const submit = () => {
         if (email === null || password === null) {
-            Alert.alert("Please Enter both Email and Password.");
+            Alert.alert("Please Fill all fields.");
         } else {
             login(email, password);
-
         }
     }
 

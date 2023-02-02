@@ -4,6 +4,7 @@ import { midtxtSz, themeColor, txtSz, xlgtxtSz } from '../theme'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { AuthContext } from '../../Authentication/AuthProvider'
 import { launchImageLibrary } from 'react-native-image-picker'
+import { toastAlert } from '../custom'
 
 
 
@@ -11,22 +12,52 @@ class EditProfile extends Component {
 
     static contextType = AuthContext;
 
-    constructor(props) {
+    constructor(props, context) {
         super(props);
         this.state = {
-            name: null,
-            email: null,
-            image: null,
-            password: null,
+            name: context.user.displayName,
+            email: context.user.email,
+            image: context.user.photoURL,
+            password: '',
         };
     }
 
+    // const submit = () => {
+    //     if (email === null || password === null || name === null || phoneNumber === null) {
+    //         Alert.alert("Please Fill all the fields.");
+    //     } else {
+
+    //         if (password.length < 8) {
+    //             Alert.alert("Password must contain 8 characters.");
+    //         } else {
+
+    //             const uploadTask = storage().ref(`/profilePics/${Date.now()}`).putFile(image);
+    //             uploadTask.then(() => {
+    //                 alert("Uploaded Succesfully");
+    //                 console.log(uploadTask);
+    //                 uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+    //                     console.log('File available at', downloadURL);
+    //                     register(email, password, name, phoneNumber, downloadURL);
+    //                 });
+    //             });
+
+    //         }
+
+    //     }
+    // }
+
     onSubmit = async () => {
-        if (this.state.name == '' || this.state.email == '') {
+        if (this.state.name == '' || this.state.email == '' || this.state.password == '' || this.state.image == '') {
             Alert.alert('', 'Please Fill all Details.')
         } else {
-            await this.context.updateProfile(this.state);
-            this.props.navigation.goBack();
+            await this.context.relogin(this.state.password).then(async () => {
+                await this.context.updateProfile(this.state);
+                toastAlert('Profile Updated Successfully.');
+                this.props.navigation.goBack();
+            }).catch(e => {
+                console.log(e)
+                Alert.alert('', 'Please Enter valid Password.')
+            })
         }
     }
 
@@ -67,18 +98,18 @@ class EditProfile extends Component {
                         <Text style={{ fontWeight: '700', color: '#fff' }}>Upload</Text>
                     </TouchableOpacity>
                 </View> */}
-                <View style={styles.inputBox} >
+                <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                     <Image style={styles.profilePic}
                         source={
                             {
                                 uri: this.state.image
                                     ? this.state.image
-                                    : 'https://firebasestorage.googleapis.com/v0/b/bringit-839a4.appspot.com/o/profilePics%2Fguest.png?alt=media&token=50a2519e-ee50-45ed-9ed2-ec53e716181b'
+                                    : 'https://firebasestorage.googleapis.com/v0/b/bringit-839a4.appspot.com/o/profilePics%2Fguest.png?alt=media&token=a8eebd76-f4c1-4761-9873-ce676857193f'
                             }
                         } />
-                    <TouchableOpacity>
-                        <Icon name="upload" size={xlgtxtSz} style={styles.inputIcon} />
-                        <Text style={[styles.inputField, { paddingVertical: 13 }]}>Upload</Text>
+                    <TouchableOpacity style={styles.uploadBtn} onPress={this.getPic}>
+                        <Icon name="upload" size={xlgtxtSz} color={themeColor} />
+                        <Text style={{ color: themeColor, fontWeight: '700' }}>Choose Image</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -86,7 +117,7 @@ class EditProfile extends Component {
                     <Icon name="user" size={xlgtxtSz} style={styles.inputIcon} />
                     <TextInput
                         placeholder='Enter your Name'
-                        // value={this.context.user.displayName}
+                        value={this.state.name}
                         style={styles.inputField}
                         onChangeText={(txt) => {
                             this.setState({ name: txt })
@@ -97,7 +128,7 @@ class EditProfile extends Component {
                     <Icon name="envelope" size={xlgtxtSz} style={styles.inputIcon} />
                     <TextInput
                         placeholder='Enter your Email'
-                        // value={this.context.user.email}
+                        value={this.state.email}
                         style={styles.inputField}
                         onChangeText={(txt) => {
                             this.setState({ email: txt })
@@ -136,16 +167,22 @@ export default EditProfile
 const styles = StyleSheet.create({
     profilePic: {
         width: 120,
-        height: 120
+        height: 120,
+        marginVertical: 12,
+        marginHorizontal: 20,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: 'black'
     },
     uploadBtn: {
-        marginVertical: 10,
-        marginRight: 8,
-        padding: 10,
-        backgroundColor: themeColor,
-        width: 100,
+        flexDirection: 'row',
         alignItems: 'center',
-        borderRadius: 100
+        justifyContent: 'space-around',
+        width: 150,
+        borderWidth: 2,
+        borderRadius: 10,
+        borderColor: themeColor,
+        padding: 10,
     },
     inputBox: {
         flexDirection: 'row',

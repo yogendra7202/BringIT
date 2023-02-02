@@ -1,47 +1,9 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { AirbnbRating, Icon } from '@rneui/themed'
-import firestore, { firebase } from '@react-native-firebase/firestore'
-import auth from '@react-native-firebase/auth'
 import Counter from '../Components/Counter'
-import { lgtxtSz, midtxtSz, themeColor, txtSz, xlgtxtSz } from '../theme'
+import { lgtxtSz, themeColor, xlgtxtSz } from '../theme'
 
-
-// const uid = auth().currentUser.uid;
-// const docRef = firestore().collection('cart').doc(uid);
-// const increment = firebase.firestore.FieldValue.increment(1);
-
-// async function addToCart(productID, item) {
-
-//     await docRef.get()
-//         .then(querySnapshot => {
-//             // console.log('Total users: ', querySnapshot.data());
-//             // console.log(Object.keys(querySnapshot.data()).some(item => productID === item));
-//             // console.log(Object.keys(querySnapshot.data()).indexOf(productID) > -1)
-
-//             const data = querySnapshot.data();
-//             if (Object.keys(data).includes(productID)) {
-//                 // console.log([data.productID + '.qty'] + 1);
-//                 docRef.update({
-//                     [productID + '.qty']: increment,
-//                 });
-//             } else {
-//                 docRef.set({
-//                     [productID]: { product: item, qty: 1 },
-//                 }, { merge: true });
-//             }
-//             console.log();
-
-//         }).catch((error) => {
-//             console.log("Error...", error);
-//         });
-//     // .then(() => {
-//     //     console.log('Item added to Cart!');
-//     // }).catch((error) => {
-//     //     console.log("Error...", error);
-//     // });
-
-// }
 
 const Product = ({ route, navigation }) => {
     const item = route.params.data;

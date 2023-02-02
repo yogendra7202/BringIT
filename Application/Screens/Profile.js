@@ -21,26 +21,22 @@ const Profile = ({ navigation }) => {
           </View>
           <TouchableOpacity style={styles.field} onPress={() => navigation.navigate('EditPassword')}>
             <Icon name="key" size={lgtxtSz} />
-            {/* <Text>Phone No.</Text> */}
             <Text style={styles.fieldTxt}>Change Password</Text>
             <Icon name="chevron-right" size={midtxtSz} />
           </TouchableOpacity>
+
           <TouchableOpacity style={styles.field} onPress={() => navigation.navigate('Orders')}>
             <Icon name="shopping-basket" size={lgtxtSz} />
-            {/* <Text>Password</Text> */}
             <Text style={styles.fieldTxt}>My Orders</Text>
             <Icon name="chevron-right" size={midtxtSz} />
           </TouchableOpacity>
+
           <TouchableOpacity style={styles.field} onPress={() => navigation.navigate('Address')}>
             <Icon name="map-marker" size={lgtxtSz} />
             <Text style={styles.fieldTxt}>My Address</Text>
             <Icon name="chevron-right" size={midtxtSz} style={{ right: 0 }} />
-            {/* <View>
-            <Text style={styles.fieldTxt}>Building No.</Text>
-            <Text style={styles.fieldTxt}>Street, Block</Text>
-            <Text style={styles.fieldTxt}>City, State - Pincode</Text>
-          </View> */}
           </TouchableOpacity>
+
           {/* <Pressable style={styles.field} onPress={update}>
           <Icon name="pencil" size={lgtxtSz} style={{ marginRight: 15 }} />
           <Text style={styles.fieldTxt}>Edit Profile</Text>
@@ -86,7 +82,7 @@ const styles = StyleSheet.create({
     marginVertical: 25,
   },
   field: {
-    width: '100%',
+    flex: 1,
     flexDirection: 'row',
     padding: 20,
     borderWidth: 1,
@@ -97,6 +93,7 @@ const styles = StyleSheet.create({
     // marginHorizontal: 25,
   },
   fieldTxt: {
+    flex: .98,
     marginLeft: 15,
     fontSize: txtSz,
   },

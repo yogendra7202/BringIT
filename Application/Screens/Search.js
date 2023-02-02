@@ -30,7 +30,6 @@ class Search extends Component {
     }
 
     fetchProductList(keyword) {
-        console.log(keyword)
         if (keyword == '') {
             this.setState({ searchList: null })
         } else {
@@ -54,6 +53,7 @@ class Search extends Component {
                 <View style={styles.searchBarContainer}>
                     <TextInput style={styles.searchBar}
                         // ref={this.myTextInput}
+                        placeholder={'Search for product here...'}
                         value={this.state.search}
                         onChangeText={(text) => this.setState({ search: text })}
                         onSubmitEditing={() => this.fetchProductList(this.state.search)} />
@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
         paddingBottom: 2,
         margin: 15,
         position: 'absolute',
+        alignItems: 'center'
     },
     searchBar: {
         width: '90%',

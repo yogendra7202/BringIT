@@ -30,6 +30,10 @@ class Address extends Component {
         }
     }
 
+    componentWillUnmount() {
+        updateFAUserAddress(this.props.addressState)
+    }
+
     onSubmit = () => {
         if (Object.values(this.state.address).includes('') || Object.values(this.state.address).includes(null)) {
             Alert.alert('', 'Please Enter All Details.', null);

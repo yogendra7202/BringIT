@@ -18,18 +18,14 @@ export async function fetchFSProducts(keyword) {
         }
     }))
 
-    // await productsRef.where('productName', '==', keyword)
-
 }
 
 export async function fetchAllFSProducts() {
-    // let ids;
 
     if (!data) {
         await productsRef.get()
             .then(querySnapshot => {
                 console.log("Products Fetched",)
-                // ids = querySnapshot.docs.map((doc) => doc.id);
                 data = querySnapshot.docs.map((doc) => ({ 'productId': doc.id, 'product': doc.data() }));
             })
             .catch((error) => {

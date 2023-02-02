@@ -29,8 +29,7 @@ const BlankItem = ({ onclick, type }) => {
 
     return (
         <View style={styles.atCenter}>
-            <Image style={styles.image}
-                source={{ uri: imageUrl }} />
+            <Image style={styles.image} source={{ uri: imageUrl }} />
             <Text style={styles.msg}>There is no item here</Text>
             {
                 onclick

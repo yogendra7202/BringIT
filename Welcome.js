@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import auth from '@react-native-firebase/auth'
-import { AuthContext } from './Authentication/AuthProvider';
-import AppStack from './Application/AppStack';
-import AuthStack from './Authentication/AuthStack';
 import { Provider } from 'react-redux';
 import store from './Application/Redux/Store';
-import { Alert, BackHandler } from 'react-native';
+import { AuthContext } from './Authentication/AuthProvider';
+import AuthStack from './Authentication/AuthStack';
+import AppStack from './Application/AppStack';
 
 const Welcome = () => {
     const { user, setUser } = useContext(AuthContext);

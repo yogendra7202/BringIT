@@ -29,8 +29,9 @@ export default (state = initialState, action) => {
     switch (action.type) {
         case Add_To_Wishlist:
             if (action.payload.productID in state.Wishlist) {
-                toastAlert("Already Added to Wishlist.");
-                return state;
+                const { [action.payload.productID]: _, ...delList } = state.Wishlist;
+                toastAlert("Item Removed from Wishlist.");
+                return { Wishlist: delList };
             }
             const updatedState = { Wishlist: { ...state.Wishlist, [action.payload.productID]: action.payload.item } };
             toastAlert("Item Added to Wishlist.");

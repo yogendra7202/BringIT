@@ -1,5 +1,5 @@
 import React, { createContext, useState } from 'react'
-import auth from '@react-native-firebase/auth'
+import auth, { firebase } from '@react-native-firebase/auth'
 import { Alert } from 'react-native'
 
 export const AuthContext = createContext();
@@ -30,7 +30,7 @@ const AuthProvider = ({ children }) => {
                         console.error(e);
                     }
                 },
-                register: async (email, password, name, phone, imageUri) => {
+                register: async (email, password, name, imageUri) => {
                     try {
                         await auth().createUserWithEmailAndPassword(email, password).then(
                             // async (res) => {
@@ -47,7 +47,6 @@ const AuthProvider = ({ children }) => {
                                 const update = {
                                     displayName: name,
                                     photoURL: imageUri,
-                                    phoneNumber: phone,
                                 };
                                 await auth().currentUser.updateProfile(update);
 
@@ -68,15 +67,12 @@ const AuthProvider = ({ children }) => {
                         console.error(e);
                     }
                 },
-                updateProfile: async ({ name, email, password }) => {
+                updateProfile: async ({ name, email, imageUri }) => {
                     try {
-                        // const credential = promptForCredentials();
-
-                        await user.reauthenticateWithCredential(password);
-
                         const update = {
                             // phoneNumber: "7291866738",
-                            displayName: name
+                            displayName: name,
+                            photoURL: imageUri,
                         };
                         await auth().currentUser.updateProfile(update);
                         await auth().currentUser.updateEmail(email)
@@ -84,6 +80,17 @@ const AuthProvider = ({ children }) => {
                     } catch (e) {
                         console.error(e);
                     }
+                },
+                updatePassword: async (newPassword) => {
+                    try {
+                        await auth().currentUser.updatePassword(newPassword);
+                    } catch (e) {
+                        console.log(e)
+                    }
+                },
+                relogin: async (password) => {
+                    var credential = firebase.auth.EmailAuthProvider.credential(auth().currentUser.email, password);
+                    return await auth().currentUser.reauthenticateWithCredential(credential);
                 }
             }}
         >

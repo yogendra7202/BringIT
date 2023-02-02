@@ -7,6 +7,7 @@ import ProductItem from '../Components/ProductItem'
 import { device_width } from '../AppData'
 import { Image } from 'react-native'
 import BlankItem from '../Components/BlankItem'
+import { updateFSWishlist } from '../FireBase/WishlistOperations'
 
 export class Wishlist extends Component {
 
@@ -28,8 +29,7 @@ export class Wishlist extends Component {
     // this.setState({ wishlist: this.props.wishlistState })
   }
   componentWillUnmount() {
-    // updateFSCart(this.props.cartState);
-    console.log('called wish')
+    updateFSWishlist(this.props.wishlistState)
   }
 
   render() {

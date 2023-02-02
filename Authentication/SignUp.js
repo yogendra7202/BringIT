@@ -9,18 +9,20 @@ const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [name, setName] = useState(null);
-  const [phoneNumber, setPhoneNumber] = useState(null);
+  // const [phoneNumber, setPhoneNumber] = useState(null);
   const [image, setImage] = useState(null);
 
   const { register } = useContext(AuthContext);
 
   const submit = () => {
-    if (email === null || password === null || name === null || phoneNumber === null) {
+    if (email === null || password === null || name === null) {
       Alert.alert("Please Fill all the fields.");
     } else {
 
-      if (password.length < 8) {
-        Alert.alert("Password must contain 8 characters.");
+      if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        Alert.alert('', "Invalid Email.")
+      } else if (!/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,12}$/.test(password)) {
+        Alert.alert('', "Password must contain:\n> 8 to 12 characters.\n> 1 Special character.\n> 1 Numeric Value.");
       } else {
 
         const uploadTask = storage().ref(`/profilePics/${Date.now()}`).putFile(image);
@@ -29,7 +31,7 @@ const SignUp = ({ navigation }) => {
           console.log(uploadTask);
           uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
             console.log('File available at', downloadURL);
-            register(email, password, name, phoneNumber, downloadURL);
+            register(email, password, name, downloadURL);
           });
         });
 
@@ -75,7 +77,7 @@ const SignUp = ({ navigation }) => {
               {
                 uri: image
                   ? image
-                  : 'https://firebasestorage.googleapis.com/v0/b/bringit-839a4.appspot.com/o/profilePics%2Fguest.png?alt=media&token=50a2519e-ee50-45ed-9ed2-ec53e716181b'
+                  : 'https://firebasestorage.googleapis.com/v0/b/bringit-839a4.appspot.com/o/profilePics%2Fguest.png?alt=media&token=a8eebd76-f4c1-4761-9873-ce676857193f'
               }} />
 
           <View style={{ flexDirection: 'row' }}>
@@ -95,9 +97,9 @@ const SignUp = ({ navigation }) => {
           <TextInput style={styles.textInput} autoCapitalize='none'
             autoCorrect={false} onChangeText={(text) => { setEmail(text) }} />
 
-          <Text style={styles.label}>Enter Phone Number </Text>
+          {/* <Text style={styles.label}>Enter Phone Number </Text>
           <TextInput style={styles.textInput} autoCapitalize='none'
-            autoCorrect={false} onChangeText={(text) => { setPhoneNumber(text) }} />
+            autoCorrect={false} onChangeText={(text) => { setPhoneNumber(text) }} /> */}
 
           <Text style={styles.label}>Enter password </Text>
           <TextInput style={styles.textInput} autoCapitalize='none'
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: '12%',
+    paddingHorizontal: '10%',
     justifyContent: 'center',
     backgroundColor: '#ffffffb0'
   },
@@ -185,7 +187,7 @@ const styles = StyleSheet.create({
   },
   newAccountLink: {
     alignSelf: 'center',
-    fontSize: 20
+    fontSize: 16
   }
 })
 

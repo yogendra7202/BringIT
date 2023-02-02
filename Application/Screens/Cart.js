@@ -3,8 +3,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import ProductItem from '../Components/ProductItem';
 import { removeFromCart } from '../Redux/Actions';
-import { lgtxtSz, midtxtSz, smtxtSz, themeColor, txtSz, } from '../theme';
-import { device_width } from '../AppData';
+import { themeColor, txtSz, } from '../theme';
 import BlankItem from '../Components/BlankItem';
 import { updateFSCart } from '../FireBase/CartOperations';
 
@@ -21,7 +20,6 @@ export class Cart extends Component {
     componentDidMount() {
         this.setState({ cart: this.props.cartState })
         this.props.setCartCount(this.props.totalQty)
-        // console.log(this.props);
     }
     componentDidUpdate() {
         if (this.props.cartState != this.state.cart) {
@@ -30,8 +28,7 @@ export class Cart extends Component {
         }
     }
     componentWillUnmount() {
-        // updateFSCart(this.props.cartState);
-        console.log('called')
+        updateFSCart(this.props.cartState);
     }
 
     render() {
